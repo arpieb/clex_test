@@ -1,0 +1,4 @@
+%{
+  "cl": {:git, "https://github.com/tonyrog/cl.git", "0e49a47e78a1eb207c9968a2453447c55adbc3f9", [ref: "0e49a47e78a1eb207c9968a2453447c55adbc3f9"]},
+  "clex": {:git, "https://github.com/arpieb/clex.git", "4e55737ee0f6bd76edf1a27615b6cf44603d0edd", [branch: "master"]},
+}
