@@ -17,7 +17,7 @@ defmodule ClexTest.Utils do
   end
 
   defp _list_to_float_bitstring(x, num_bits) when is_number(x) and is_integer(num_bits) do
-    <<x::float-size(num_bits)>>
+    <<x::native-float-size(num_bits)>>
   end
 
   @doc ~S"""
@@ -32,7 +32,7 @@ defmodule ClexTest.Utils do
   end
 
   defp _float_bitstring_to_list(data, num_bits) when is_bitstring(data) and is_integer(num_bits) do
-    <<x::float-size(num_bits), rest::binary>> = data
+    <<x::native-float-size(num_bits), rest::binary>> = data
     [x | _float_bitstring_to_list(rest, num_bits)]
   end
 
