@@ -1,6 +1,6 @@
 %{
   "cl": {:git, "https://github.com/tonyrog/cl.git", "0e49a47e78a1eb207c9968a2453447c55adbc3f9", [ref: "0e49a47e78a1eb207c9968a2453447c55adbc3f9"]},
-  "clex": {:git, "https://github.com/arpieb/clex.git", "4e55737ee0f6bd76edf1a27615b6cf44603d0edd", [branch: "master"]},
+  "clex": {:git, "https://github.com/arpieb/clex.git", "f20ba48e696ff5f3b0e8d1514347a16ee9d6b5d4", [branch: "master"]},
   "elixir_make": {:hex, :elixir_make, "0.5.2", "96a28c79f5b8d34879cd95ebc04d2a0d678cfbbd3e74c43cb63a76adf0ee8054", [:mix], [], "hexpm"},
   "exprintf": {:hex, :exprintf, "0.2.1", "b7e895dfb00520cfb7fc1671303b63b37dc3897c59be7cbf1ae62f766a8a0314", [:mix], [], "hexpm"},
   "matrex": {:hex, :matrex, "0.6.7", "cbbd65b58b333e456681c345e009b637b7d40cdb38b7fae3ceee407fa8e69321", [:make], [{:elixir_make, "~> 0.4", [hex: :elixir_make, repo: "hexpm", optional: false]}], "hexpm"},

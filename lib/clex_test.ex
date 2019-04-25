@@ -63,12 +63,13 @@ defmodule ClexTest do
     :ok = CL10.build_program(program, devices)
     {:ok, kernel} = CL10.create_kernel(program, MyGEMM1.name())
 
-    CL10.set_kernel_arg(kernel, 0, m)
-    CL10.set_kernel_arg(kernel, 1, n)
-    CL10.set_kernel_arg(kernel, 2, k)
-    CL10.set_kernel_arg(kernel, 3, a_mem)
-    CL10.set_kernel_arg(kernel, 4, b_mem)
-    CL10.set_kernel_arg(kernel, 5, c_mem)
+#    CL10.set_kernel_arg(kernel, 0, m)
+#    CL10.set_kernel_arg(kernel, 1, n)
+#    CL10.set_kernel_arg(kernel, 2, k)
+#    CL10.set_kernel_arg(kernel, 3, a_mem)
+#    CL10.set_kernel_arg(kernel, 4, b_mem)
+#    CL10.set_kernel_arg(kernel, 5, c_mem)
+    Clex.Utils.set_kernel_args(kernel, [m, n, k, a_mem, b_mem, c_mem])
 
     # Create command queue for the kernel to execute on
     {:ok, queue} = CL10.create_queue(context, device)
@@ -78,9 +79,9 @@ defmodule ClexTest do
     for _ <- Range.new(1, num_runs) do
       # Queue up buffer writes
       #IO.puts("Writing buffers")
-      {:ok, a_write_event} = CL10.enqueue_write_buffer(queue, a_mem, 0, a_size, a, [])
-      {:ok, b_write_event} = CL10.enqueue_write_buffer(queue, b_mem, 0, b_size, b, [])
-      {:ok, c_write_event} = CL10.enqueue_write_buffer(queue, c_mem, 0, c_size, c, [])
+      {:ok, a_write_event} = CL10.enqueue_write_buffer(queue, a_mem, 0, a_size, a)
+      {:ok, b_write_event} = CL10.enqueue_write_buffer(queue, b_mem, 0, b_size, b)
+      {:ok, c_write_event} = CL10.enqueue_write_buffer(queue, c_mem, 0, c_size, c)
 
       #IO.puts("Enqueueing kernel op")
       {:ok, wg_info} = CL10.get_kernel_workgroup_info(kernel, device)

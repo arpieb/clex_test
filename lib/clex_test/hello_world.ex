@@ -29,7 +29,7 @@ defmodule ClexTest.HelloWorld do
     {:ok, queue} = CL10.create_queue(context, hd(devices))
     {:ok, program} = CL10.create_program_with_source(context, @hello_world)
     CL10.build_program(program, devices)
-    {:ok, kernel} = CL10.create_kernel(program, 'HelloWorld')
+    {:ok, kernel} = CL10.create_kernel(program, "HelloWorld")
     {:ok, buffer} = CL10.create_buffer(context, [:read_write], 32)
     CL10.set_kernel_arg(kernel, 0, buffer)
 

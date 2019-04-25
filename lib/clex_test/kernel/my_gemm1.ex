@@ -1,7 +1,7 @@
 defmodule ClexTest.Kernel.MyGEMM1 do
   @moduledoc false
 
-  def name(), do: 'myGEMM1'
+  def name(), do: "myGEMM1"
 
   def source() do
     ~S"""
