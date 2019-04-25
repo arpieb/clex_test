@@ -5,6 +5,8 @@ defmodule ClexTest do
   https://cnugteren.github.io/tutorial/pages/page1.html
   """
 
+  @cdim 2048
+
   import ClexTest.Utils
   alias Clex.CL10
   alias ClexTest.Kernel.MyGEMM1
@@ -27,7 +29,7 @@ defmodule ClexTest do
   """
   def test_GEMM(device_type) do
     # Define matrix dims
-    cdim = 1024
+    cdim = @cdim
     m = cdim
     n = cdim
     k = cdim
@@ -107,6 +109,8 @@ defmodule ClexTest do
     CL10.release_queue(queue)
     CL10.release_context(context)
     # output |> float_bitstring_to_list(:float32) |> list_to_matrix({m, n}, 0.0)
+
+    :ok
   end
 
   defp get_local(wg_info, device_type) do
@@ -115,6 +119,27 @@ defmodule ClexTest do
       :cpu -> [1, 1]
       _ -> [16, 16]
     end
+  end
+
+  def test_Matrex() do
+    # Define matrix dims
+    cdim = @cdim
+    m = cdim
+    n = cdim
+    k = cdim
+
+    a_mat = Matrex.magic(cdim)
+    b_mat = Matrex.magic(cdim)
+
+    num_runs = 100
+    start = System.monotonic_time()
+    for _ <- Range.new(1, num_runs) do
+      Matrex.multiply(a_mat, b_mat)
+    end
+    elapsed = (System.monotonic_time() - start) |> System.convert_time_unit(:native, :millisecond)
+    IO.puts("Average exec time for #{num_runs} runs: #{elapsed / num_runs}ms per run")
+
+    :ok
   end
 
 end
