@@ -94,7 +94,8 @@ defmodule ClexTest do
       [{:ok, _output}] = CL10.wait_for_events([event])
     end
     elapsed = (System.monotonic_time() - start) |> System.convert_time_unit(:native, :millisecond)
-    IO.puts("Average exec time for #{num_runs} runs: #{elapsed / num_runs}ms per run")
+    retval = "Average exec time for #{num_runs} runs: #{elapsed / num_runs}ms per run"
+    IO.puts(retval)
 
     # Perform cleanup
     CL10.finish(queue)
@@ -108,7 +109,7 @@ defmodule ClexTest do
     CL10.release_context(context)
     # output |> float_bitstring_to_list(:float32) |> list_to_matrix({m, n}, 0.0)
 
-    :ok
+    retval
   end
 
   defp get_local(wg_info, device_type) do
@@ -137,9 +138,10 @@ defmodule ClexTest do
       Matrex.multiply(a_mat, b_mat)
     end
     elapsed = (System.monotonic_time() - start) |> System.convert_time_unit(:native, :millisecond)
-    IO.puts("Average exec time for #{num_runs} runs: #{elapsed / num_runs}ms per run")
+    retval = "Average exec time for #{num_runs} runs: #{elapsed / num_runs}ms per run"
+    IO.puts(retval)
 
-    :ok
+    retval
   end
 
 end
