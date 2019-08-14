@@ -23,7 +23,7 @@ defmodule ClexTest.MixProject do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
-      {:clex, git: "https://github.com/arpieb/clex.git", branch: "master"},
+      {:clex, git: "https://github.com/arpieb/clex.git", branch: "dirty-nif"},
       {:matrix, "~> 0.3.2"},
       {:matrex, "~> 0.6.7"},
     ]

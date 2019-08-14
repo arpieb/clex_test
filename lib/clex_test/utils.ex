@@ -41,7 +41,7 @@ defmodule ClexTest.Utils do
   ########################################
 
   @doc ~S"""
-  Convert the provided flat list into a nexted list in the shape of rows x cols.
+  Convert the provided flat list into a nested list in the shape of rows x cols.
   """
   @spec list_to_matrix(l::[], shape::tuple, val::number) :: [[]]
   def list_to_matrix(l, {rows, cols}, val) do

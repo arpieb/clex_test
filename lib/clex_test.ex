@@ -9,7 +9,7 @@ defmodule ClexTest do
 
   import ClexTest.Utils
   alias Clex.CL10
-  alias ClexTest.Kernel.MyGEMM1
+  alias ClexTest.Kernel.MyGEMM1, as: MyGEMM
 
   def test_utils() do
     m = Matrix.ident(3)
@@ -37,9 +37,10 @@ defmodule ClexTest do
     # Set up compute context
     IO.puts("Setting up compute context")
     {:ok, [platform | _]} = CL10.get_platform_ids()
-    {:ok, devices} = CL10.get_device_ids(platform, device_type)
+    {:ok, available_devices} = CL10.get_device_ids(platform, device_type)
+    device = hd(available_devices)
+    devices = [device]
     {:ok, context} = CL10.create_context(devices)
-    device = hd(devices)
 
     # Create input matrices and allocate buffer for output matrix
     IO.puts("Allocating buffers")
@@ -59,35 +60,31 @@ defmodule ClexTest do
     {:ok, c_mem} = CL10.create_buffer(context, [:read_write], c_size)
 
     # Initialize the kernel
-    {:ok, program} = CL10.create_program_with_source(context, MyGEMM1.source())
+    {:ok, program} = CL10.create_program_with_source(context, MyGEMM.source())
     :ok = CL10.build_program(program, devices)
-    {:ok, kernel} = CL10.create_kernel(program, MyGEMM1.name())
+    {:ok, kernel} = CL10.create_kernel(program, MyGEMM.name())
 
-#    CL10.set_kernel_arg(kernel, 0, m)
-#    CL10.set_kernel_arg(kernel, 1, n)
-#    CL10.set_kernel_arg(kernel, 2, k)
-#    CL10.set_kernel_arg(kernel, 3, a_mem)
-#    CL10.set_kernel_arg(kernel, 4, b_mem)
-#    CL10.set_kernel_arg(kernel, 5, c_mem)
     Clex.Utils.set_kernel_args(kernel, [m, n, k, a_mem, b_mem, c_mem])
 
     # Create command queue for the kernel to execute on
     {:ok, queue} = CL10.create_queue(context, device)
 
+    # Queue up buffer writes
+    IO.puts("Writing to device buffers")
+    {:ok, a_write_event} = CL10.enqueue_write_buffer(queue, a_mem, 0, a_size, a)
+    {:ok, b_write_event} = CL10.enqueue_write_buffer(queue, b_mem, 0, b_size, b)
+    {:ok, c_write_event} = CL10.enqueue_write_buffer(queue, c_mem, 0, c_size, c)
+    CL10.wait_for_events([a_write_event, b_write_event, c_write_event])
+
     num_runs = 100
+    IO.puts("Executing #{num_runs} GEMM operations")
     start = System.monotonic_time()
     for _ <- Range.new(1, num_runs) do
-      # Queue up buffer writes
-      #IO.puts("Writing buffers")
-      {:ok, a_write_event} = CL10.enqueue_write_buffer(queue, a_mem, 0, a_size, a)
-      {:ok, b_write_event} = CL10.enqueue_write_buffer(queue, b_mem, 0, b_size, b)
-      {:ok, c_write_event} = CL10.enqueue_write_buffer(queue, c_mem, 0, c_size, c)
-
       #IO.puts("Enqueueing kernel op")
       {:ok, wg_info} = CL10.get_kernel_workgroup_info(kernel, device)
       local = get_local(wg_info, device_type)
       global = [m, n]
-      {:ok, kernel_event} = CL10.enqueue_nd_range_kernel(queue, kernel, global, local, [a_write_event, b_write_event, c_write_event])
+      {:ok, kernel_event} = CL10.enqueue_nd_range_kernel(queue, kernel, global, local)
 
       #IO.puts("Enqueueing read from output buffer")
       {:ok, event} = CL10.enqueue_read_buffer(queue, c_mem, 0, c_size, [kernel_event])
@@ -129,10 +126,12 @@ defmodule ClexTest do
     n = cdim
     k = cdim
 
-    a_mat = Matrex.magic(cdim)
-    b_mat = Matrex.magic(cdim)
+    IO.puts("Allocating matrices")
+    a_mat = Matrex.ones(cdim)
+    b_mat = Matrex.ones(cdim)
 
     num_runs = 100
+    IO.puts("Executing #{num_runs} GEMM operations")
     start = System.monotonic_time()
     for _ <- Range.new(1, num_runs) do
       Matrex.multiply(a_mat, b_mat)
